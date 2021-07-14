@@ -1,20 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Text, View, ScrollView, StyleSheet, SafeAreaView} from 'react-native';
-import {useEffect} from 'react';
-import MovieItem from '../components/MoviItem';
+import {connect} from 'react-redux';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {connect} from 'react-redux';
-import {getMovies} from '../redux/actions/index';
+import {getMovies} from '../redux/actions';
+import MovieItem from '../components/MoviItem';
 
-const Home = props => {
+const Home = ({movies: {results = []} = {}, isLoading, getMovies}) => {
   useEffect(() => {
-    props.getMovies();
+    getMovies();
   }, []);
-  console.log(props.movies);
-  console.log(props.message);
-  console.log(props.isLoading);
 
   return (
     <SafeAreaView>
@@ -24,9 +20,11 @@ const Home = props => {
       </View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={{flexDirection: 'row', flex: 1, paddingLeft: 20}}>
-          {props.movies.results.map(item => (
-            <MovieItem key={item.id} item={item} />
-          ))}
+          {isLoading ? (
+            <Text>loading</Text>
+          ) : (
+            results?.map(item => <MovieItem key={item.id} item={item} />)
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

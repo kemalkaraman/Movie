@@ -1,5 +1,5 @@
 const INITIAL_STATE = {
-  isLoading: false,
+  isLoading: true,
   movies: [],
   message: 'test',
 };
