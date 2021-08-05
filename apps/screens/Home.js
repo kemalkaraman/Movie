@@ -4,11 +4,17 @@ import {connect} from 'react-redux';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {getMovies} from '../redux/actions';
-import MovieItem from '../components/MoviItem';
+import {getMovies, getGenres, getTrailer} from '../redux/actions';
+import MovieItem from '../components/MovieItem';
 
-const Home = ({movies: {results = []} = {}, isLoading, getMovies}) => {
+const Home = ({
+  movies: {results = []} = {},
+  isLoading,
+  getMovies,
+  getGenres,
+}) => {
   useEffect(() => {
+    getGenres();
     getMovies();
   }, []);
 
@@ -24,6 +30,7 @@ const Home = ({movies: {results = []} = {}, isLoading, getMovies}) => {
             <Text>loading</Text>
           ) : (
             results?.map(item => <MovieItem key={item.id} item={item} />)
+            // genres?.map(item => <Text key={item.id}>{item.name}</Text>)
           )}
         </View>
       </ScrollView>
@@ -54,9 +61,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    movies: state.movies,
-    isLoading: state.isLoading,
+    movies: state.movies.movies,
+    isLoading: state.movies.isLoading,
   };
 };
 
-export default connect(mapStateToProps, {getMovies})(Home);
+export default connect(mapStateToProps, {getMovies, getGenres})(Home);
