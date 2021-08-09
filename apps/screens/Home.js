@@ -1,21 +1,40 @@
 import React, {useEffect} from 'react';
-import {Text, View, ScrollView, StyleSheet, SafeAreaView} from 'react-native';
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {getMovies, getGenres, getTrailer} from '../redux/actions';
+import {
+  getMovies,
+  getGenres,
+  getTrailer,
+  getRecentMovies,
+} from '../redux/actions';
 import MovieItem from '../components/MovieItem';
+import RecentMovieItem from '../components/RecentMovieItem';
+import recentMovies from '../redux/reducer/recentMovies';
 
+RecentMovieItem;
 const Home = ({
   movies: {results = []} = {},
+  genres,
+  recentMovies,
   isLoading,
   getMovies,
   getGenres,
+  getRecentMovies,
 }) => {
   useEffect(() => {
     getGenres();
     getMovies();
+    getRecentMovies();
   }, []);
 
   return (
@@ -24,14 +43,103 @@ const Home = ({
         <Text style={styles.title}>Movie Catch</Text>
         <MaterialCommunityIcons name="magnify" size={28} />
       </View>
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        <View style={{flexDirection: 'row', flex: 1, paddingLeft: 20}}>
-          {isLoading ? (
-            <Text>loading</Text>
-          ) : (
-            results?.map(item => <MovieItem key={item.id} item={item} />)
-            // genres?.map(item => <Text key={item.id}>{item.name}</Text>)
-          )}
+      <ScrollView>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            marginVertical: 15,
+          }}>
+          <Text
+            style={{
+              fontFamily: 'Poppins-Regular',
+            }}>
+            Popular Movies
+          </Text>
+          <TouchableWithoutFeedback
+            onPress={() =>
+              this.props.navigation.navigate('ViewAll', {
+                genres: this.genres,
+                isPopular: true,
+              })
+            }>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Poppins-SemiBold',
+                }}>
+                Vew All
+              </Text>
+              <MaterialCommunityIcons
+                name="chevron-right"
+                size={20}
+                color={'black'}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <View style={{flexDirection: 'row', flex: 1, paddingLeft: 20}}>
+            {isLoading ? (
+              <Text>loading</Text>
+            ) : (
+              results?.map(item => <MovieItem key={item.id} item={item} />)
+            )}
+          </View>
+        </ScrollView>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            marginVertical: 15,
+          }}>
+          <Text
+            style={{
+              fontFamily: 'poppins-r',
+            }}>
+            Recent Movies
+          </Text>
+          <TouchableWithoutFeedback
+            onPress={() =>
+              this.props.navigation.navigate('ViewAll', {
+                genres: this.genres,
+                isPopular: false,
+              })
+            }>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Poppins-SemiBold',
+                }}>
+                View All
+              </Text>
+              <MaterialCommunityIcons name="chevron-right" size={20} />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+
+        <View style={{flexDirection: 'column', flex: 1, paddingLeft: 20}}>
+          {recentMovies?.results?.map((item, index) => {
+            return index < 5 ? (
+              <RecentMovieItem key={item.id} item={item} genres={this.genres} />
+            ) : (
+              <View key={item.id} />
+            );
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -52,7 +160,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontFamily: 'poppins-sb',
+    fontFamily: 'Poppins-Regular',
   },
   rectangle: {
     height: 40,
@@ -63,7 +171,13 @@ const mapStateToProps = state => {
   return {
     movies: state.movies.movies,
     isLoading: state.movies.isLoading,
+    genres: state.genres.genres,
+    recentMovies: state.recentMovies.recentMovies,
   };
 };
 
-export default connect(mapStateToProps, {getMovies, getGenres})(Home);
+export default connect(mapStateToProps, {
+  getGenres,
+  getMovies,
+  getRecentMovies,
+})(Home);

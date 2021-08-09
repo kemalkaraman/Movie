@@ -8,8 +8,6 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 const MovieItem = props => {
-  console.log(props.item.title);
-
   const navigation = useNavigation();
   return (
     <TouchableWithoutFeedback
@@ -26,7 +24,7 @@ const MovieItem = props => {
         <Text
           style={{
             width: 171,
-            fontFamily: 'poppins-r',
+            fontFamily: 'Poppins-Regular',
             fontSize: 13,
           }}>
           {props.item.title}

@@ -15,6 +15,7 @@ const MainRoot = () => {
         activeTintColor: '#333',
         inactiveTintColor: '#999',
         keyboardHidesTabBar: true,
+        labelStyle: {fontFamily: 'Poppins-Regular'},
       }}
       initialRouteName="Home">
       <Tab.Screen

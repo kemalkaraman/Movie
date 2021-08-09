@@ -1,12 +1,18 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
   Image,
   StyleSheet,
   TouchableWithoutFeedback,
+  ScrollView,
+  Modal,
 } from 'react-native';
 import ChipGroup from '../components/ChipGroup';
+import TrailerItems from '../components/TrailerItems';
+
+import YoutubePlayer from 'react-native-youtube-iframe';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {connect} from 'react-redux';
 import {getTrailer} from '../redux/actions';
@@ -15,15 +21,60 @@ const MovieDetail = ({
   navigation,
   route,
   genres: {genres = []} = {},
-  trailer,
+  trailer: {results = []} = {},
   getTrailer,
 }) => {
   useEffect(() => {
     getTrailer(route.params.item.id);
   }, []);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [activeMovieTrailerKey, setActiveMovieTrailerKey] = useState('');
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <Modal
+        style={{position: 'absolute', top: 0}}
+        animationType="slide"
+        transparent={true}
+        statusBarTranslucent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          this.setState({modalVisible: false});
+        }}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#000',
+          }}>
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View
+              style={{
+                backgroundColor: '#222',
+                width: 48,
+                height: 48,
+                position: 'absolute',
+                top: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                left: 20,
+                borderRadius: 10,
+              }}>
+              <MaterialCommunityIcons name="close" size={20} color={'white'} />
+            </View>
+          </TouchableWithoutFeedback>
+
+          <View style={{width: '100%'}}>
+            <YoutubePlayer
+              play={true}
+              height={270}
+              videoId={activeMovieTrailerKey}
+            />
+          </View>
+        </View>
+      </Modal>
+
       <TouchableWithoutFeedback
         onPress={() => {
           navigation.pop();
@@ -39,7 +90,7 @@ const MovieDetail = ({
           }}
           name="chevron-left"
           size={24}
-          // color={isDarkMode ? light.bg : dark.bg}
+          color={'white'}
         />
       </TouchableWithoutFeedback>
       <Image
@@ -72,9 +123,26 @@ const MovieDetail = ({
         <Text style={styles.title}> Overview </Text>
         <Text> {route.params.item.overview}</Text>
         <Text style={styles.title}> Teasers & Trailers </Text>
-        <Text>{trailer?.backdrop_path}</Text>
+        <View style={{flexWrap: 'wrap', flexDirection: 'row'}}>
+          {results.map((item, index) => {
+            return (
+              <TrailerItems
+                key={item.key}
+                poster={route.params.item.backdrop_path}
+                data={item}
+                itemIndex={index}
+                onPressFunction={() => {
+                  setModalVisible(true);
+                  setActiveMovieTrailerKey(item.key);
+                  console.log('tıklandı');
+                }}
+                modalVisible={modalVisible}
+              />
+            );
+          })}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -83,7 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   rating: {
-    fontFamily: 'poppins-sb',
+    fontFamily: 'Poppins-Bold',
     marginTop: 4,
   },
   ratingBadge: {
@@ -106,12 +174,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: 'poppins-r',
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-SemiBold',
   },
   header: {
     fontSize: 20,
-    fontFamily: 'poppins-sb',
+    fontFamily: 'Poppins-SemiBold',
     marginTop: 10,
   },
   itemGroup: {

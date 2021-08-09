@@ -10,6 +10,7 @@ import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import rootReducer from './apps/redux/reducer';
 import thunk from 'redux-thunk';
+import {View} from 'react-native';
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 const Stack = createStackNavigator();

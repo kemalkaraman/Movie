@@ -27,10 +27,26 @@ export const getTrailer = id => dispatch => {
   console.log('id : ' + id);
   axios
     .get(
-      'http://api.themoviedb.org/3/movie/497698?api_key=802b2c4b88ea1183e50e6b285a27696e',
+      'http://api.themoviedb.org/3/movie/' +
+        id +
+        '/videos?api_key=802b2c4b88ea1183e50e6b285a27696e',
     )
     .then(response =>
       dispatch({type: 'GET_TRAILER_SUCCESS', payload: response?.data ?? []}),
     )
     .catch(error => dispatch({type: 'GET_TRAILER_ERROR', payload: error}));
+};
+
+export const getRecentMovies = () => dispatch => {
+  axios
+    .get(
+      'https://api.themoviedb.org/3/movie/now_playing?api_key=802b2c4b88ea1183e50e6b285a27696e',
+    )
+    .then(response =>
+      dispatch({
+        type: 'GET_RECENTMOVIES_SUCCESS',
+        payload: response?.data ?? [],
+      }),
+    )
+    .catch(error => dispatch({type: 'GET_RECENTMOVIES_ERROR', payload: error}));
 };

@@ -10,13 +10,13 @@ function ChipGroup(props) {
           styles.chipitem,
           {
             borderColor: '#0E0E0E',
-            backgroundColor: 'black',
+            backgroundColor: 'white',
           },
         ]}>
         <Text
           style={{
-            color: 'white',
-            fontFamily: 'poppins-r',
+            color: 'black',
+            fontFamily: 'Poppins-Regular',
             fontSize: 11,
           }}>
           {props.name}
@@ -27,6 +27,10 @@ function ChipGroup(props) {
 }
 
 const styles = StyleSheet.create({
+  itemGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
   chipitem: {
     borderWidth: 1.5,
     justifyContent: 'center',
